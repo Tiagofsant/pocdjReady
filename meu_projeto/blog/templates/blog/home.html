@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <h1>Selecione uma Localidade</h1>
+    <select id="localSelect">
+      <option value="">Selecione uma localidade</option>
+      {% for local in locais %}
+      <option value="{{ local.id }}">{{ local.nome }}</option>
+      {% endfor %}
+    </select>
+
+    <h2>Convênios</h2>
+    <select id="convenioSelect">
+      <option value="">Selecione um convênio</option>
+    </select>
+
+    <script>
+      $(document).ready(function () {
+        $("#localSelect").change(function () {
+          var selectedLocal = $(this).val();
+          if (selectedLocal) {
+            $.post(
+              "{% url 'get_convenios' %}",
+              { selected_local: selectedLocal },
+              function (data) {
+                $("#convenioSelect")
+                  .empty()
+                  .append('<option value="">Selecione um convênio</option>');
+                data.forEach(function (convenio) {
+                  $("#convenioSelect").append(
+                    '<option value="' +
+                      convenio.id +
+                      '">' +
+                      convenio.descricao +
+                      " (" +
+                      convenio.estado +
+                      ")</option>"
+                  );
+                });
+              }
+            );
+          } else {
+            $("#convenioSelect")
+              .empty()
+              .append('<option value="">Selecione um convênio</option>');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
